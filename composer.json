@@ -1,0 +1,28 @@
+{
+  "name": "javabudd/ivrank",
+  "authors": [
+    {
+      "name": "Andy O'Brien",
+      "email": "javabudd@gmail.com"
+    }
+  ],
+  "require": {
+    "doctrine/doctrine-orm-module": "^3.1",
+    "ext-intl": "*",
+    "ext-json": "*",
+    "ext-pcntl": "*",
+    "guzzlehttp/guzzle": "^7.2",
+    "laminas/laminas-mvc-console": "^1.3",
+    "php": "^7.4 || ~8.0.0",
+    "laminas/laminas-i18n": "^2.11"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.2.6",
+    "roave/security-advisories": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "IVRank\\": "src/"
+    }
+  }
+}

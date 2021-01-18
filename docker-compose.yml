@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  db:
+    image: mariadb:10.5
+    privileged: true
+    environment:
+      - MYSQL_USER=ivrank
+      - MYSQL_PASSWORD=poopboobs
+      - MYSQL_DATABASE=ivrank
+      - MYSQL_ROOT_PASSWORD=poopboobs
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
