@@ -27,7 +27,7 @@ class WebController extends AbstractActionController
 
         $stock = $em->getRepository(Stock::class)->findOneBy(['ticker' => $ticker]);
 
-        if (!$stock) {
+        if (!$stock && !$em->find(StockQueue::class, $ticker)) {
             $queue         = new StockQueue();
             $queue->ticker = $ticker;
 

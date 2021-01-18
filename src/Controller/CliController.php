@@ -38,6 +38,10 @@ class CliController extends AbstractConsoleController implements ObjectManagerAw
             if (\microtime(true) - $start % (60 * 60 * 12) === 0) {
                 /** @var Stock $stock */
                 foreach ($stockRepo->findAll() as $stock) {
+                    if ($em->find(StockQueue::class, $stock->ticker)) {
+                        continue;
+                    }
+
                     $queue         = new StockQueue();
                     $queue->ticker = $stock->ticker;
 
@@ -124,7 +128,7 @@ class CliController extends AbstractConsoleController implements ObjectManagerAw
                 $em->persist($metric);
             }
 
-            if ($key % 200 === 0) {
+            if ($key % 100 === 0) {
                 $em->flush();
             }
         }
