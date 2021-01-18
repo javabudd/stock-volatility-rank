@@ -2,6 +2,7 @@
 
 namespace IVRank\Controller;
 
+use DateTime;
 use Doctrine\ORM\EntityManager;
 use IVRank\Data\MetricType;
 use IVRank\Data\Stock;
@@ -51,12 +52,20 @@ class WebController extends AbstractActionController
             return new JsonModel(['failure' => 'metric type not found']);
         }
 
-        $points = $em->getRepository(StockMetric::class)->findBy(
-            [
-                'stock'      => $stock,
-                'metricType' => $metricType
-            ]
-        );
+        $metricDate = new DateTime('now - 52 weeks');
+        $qb         = $em->createQueryBuilder();
+        $points     = $qb->select('row')
+           ->from(StockMetric::class, 'row')
+           ->where($qb->expr()->eq('row.stock', ':stock'))
+           ->andWhere($qb->expr()->eq('row.metricType', ':metricType'))
+           ->andWhere($qb->expr()->gte('row.metricDate', ':metricDate'))
+           ->setParameters(
+               [
+                   'stock' => $stock,
+                   'metricType' => $metricType,
+                   'metricDate' => $metricDate
+               ]
+           )->getQuery()->getResult();
 
         if (\count($points) === 0) {
             return new JsonModel(['failure' => 'no data found for given metric type']);
