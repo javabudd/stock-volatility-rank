@@ -89,6 +89,7 @@ class CliController extends AbstractConsoleController implements ObjectManagerAw
 
                 $em->remove($queue);
                 $em->flush();
+                $em->clear();
 
                 $this->getConsole()->writeLine(
                     "Finished inserting data for {$ticker}",
@@ -123,7 +124,7 @@ class CliController extends AbstractConsoleController implements ObjectManagerAw
                 $em->persist($metric);
             }
 
-            if ($key % 500 === 0) {
+            if ($key % 200 === 0) {
                 $em->flush();
             }
         }
