@@ -18,6 +18,6 @@ return [
         'config_cache_key'         => 'application.config.cache',
         'module_map_cache_enabled' => true,
         'module_map_cache_key'     => 'application.module.cache',
-        'cache_dir'                => BASE_PATH . '/data/cache/',
+        'cache_dir'                => BASE_PATH . '/data/cache',
     ],
 ];

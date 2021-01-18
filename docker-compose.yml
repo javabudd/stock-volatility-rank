@@ -18,7 +18,7 @@ services:
       - MYSQL_DATABASE=ivrank
       - MYSQL_ROOT_PASSWORD=poopboobs
     ports:
-      - 3306:3306
+      - 3306
     volumes:
       - db:/var/lib/mysql
 

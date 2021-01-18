@@ -1,1 +1,39 @@
-<?= $this->content; ?>
+<html lang="en-US">
+<head>
+    <title>Stock Volatility Rank</title>
+</head>
+
+<body>
+<?= $this->content ?>
+</body>
+
+<footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script>
+        $('#form_metric').submit(function (e) {
+            const ticker     = $('#form_ticker').val();
+            const metricType = $('#form_metric_type').val();
+
+            $.ajax(
+                {
+                    url: "/get-metrics",
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        ticker: ticker,
+                        metricType: metricType,
+                    }
+                }
+            ).done(function (e) {
+                $('#metric_text').val(JSON.stringify(e));
+            }).fail(function (r) {
+                console.log(e);
+            });
+
+            e.preventDefault();
+        });
+    </script>
+</footer>
+</html>
+

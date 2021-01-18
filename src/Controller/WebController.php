@@ -9,30 +9,51 @@ use IVRank\Data\Stock;
 use IVRank\Data\StockMetric;
 use IVRank\Data\StockQueue;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class WebController extends AbstractActionController
 {
-    public function indexAction(): JsonModel
+    private EntityManager $em;
+
+    public function onDispatch(MvcEvent $e)
     {
-        /** @var EntityManager $em */
-        $em         = $this->getEvent()->getApplication()->getServiceManager()->get(EntityManager::class);
-        $ticker     = $this->getRequest()->getQuery()->get('ticker');
-        $metricType = $this->getRequest()->getQuery()->get('metric');
-        $dayType    = $this->getRequest()->getQuery()->get('dayType');
+        $this->em = $this->getEvent()->getApplication()->getServiceManager()->get(EntityManager::class);
+
+        return parent::onDispatch($e);
+    }
+
+    public function indexAction(): ViewModel
+    {
+        $qb = $this->em->createQueryBuilder();
+
+        $qb->select('row')->from(MetricType::class, 'row')->orderBy('row.name, row.dayType', 'DESC');
+
+        return new ViewModel(
+            [
+                'metricTypes' => $qb->getQuery()->getResult()
+            ]
+        );
+    }
+
+    public function getMetricsAction(): JsonModel
+    {
+        $ticker     = $this->getRequest()->getPost()->get('ticker');
+        $metricType = $this->getRequest()->getPost()->get('metricType');
 
         if (!$ticker) {
             return new JsonModel(['failure' => 'no ticker provided']);
         }
 
-        $stock = $em->getRepository(Stock::class)->findOneBy(['ticker' => $ticker]);
+        $stock = $this->em->getRepository(Stock::class)->findOneBy(['ticker' => $ticker]);
 
-        if (!$stock && !$em->find(StockQueue::class, $ticker)) {
+        if (!$stock && !$this->em->find(StockQueue::class, $ticker)) {
             $queue         = new StockQueue();
             $queue->ticker = $ticker;
 
-            $em->persist($queue);
-            $em->flush();
+            $this->em->persist($queue);
+            $this->em->flush();
 
             return new JsonModel(
                 [
@@ -41,31 +62,26 @@ class WebController extends AbstractActionController
             );
         }
 
-        $metricType = $em->getRepository(MetricType::class)->findOneBy(
-            [
-                'name'    => $metricType,
-                'dayType' => $dayType
-            ]
-        );
+        $metricType = $this->em->find(MetricType::class, $metricType);
 
         if (!$metricType) {
             return new JsonModel(['failure' => 'metric type not found']);
         }
 
         $metricDate = new DateTime('now - 52 weeks');
-        $qb         = $em->createQueryBuilder();
+        $qb         = $this->em->createQueryBuilder();
         $points     = $qb->select('row')
-           ->from(StockMetric::class, 'row')
-           ->where($qb->expr()->eq('row.stock', ':stock'))
-           ->andWhere($qb->expr()->eq('row.metricType', ':metricType'))
-           ->andWhere($qb->expr()->gte('row.metricDate', ':metricDate'))
-           ->setParameters(
-               [
-                   'stock' => $stock,
-                   'metricType' => $metricType,
-                   'metricDate' => $metricDate
-               ]
-           )->getQuery()->getResult();
+                         ->from(StockMetric::class, 'row')
+                         ->where($qb->expr()->eq('row.stock', ':stock'))
+                         ->andWhere($qb->expr()->eq('row.metricType', ':metricType'))
+                         ->andWhere($qb->expr()->gte('row.metricDate', ':metricDate'))
+                         ->setParameters(
+                             [
+                                 'stock'      => $stock,
+                                 'metricType' => $metricType,
+                                 'metricDate' => $metricDate
+                             ]
+                         )->getQuery()->getResult();
 
         if (\count($points) === 0) {
             return new JsonModel(['failure' => 'no data found for given metric type']);

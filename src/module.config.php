@@ -15,7 +15,7 @@ return [
             'orm_default' => [
                 'driverClass' => Driver::class,
                 'params'      => [
-                    'host'     => '127.0.0.1',
+                    'host'     => 'db',
                     'port'     => '3306',
                     'user'     => 'ivrank',
                     'password' => 'poopboobs',
@@ -47,8 +47,9 @@ return [
         'not_found_template'     => 'error/404',
         'exception_template'     => 'error/index',
         'template_map'           => [
-            'error/404'   => BASE_PATH . '/view/error/404.phtml',
-            'error/index' => BASE_PATH . '/view/error/index.phtml',
+            'error/404'         => BASE_PATH . '/view/error/404.phtml',
+            'error/index'       => BASE_PATH . '/view/error/index.phtml',
+            'iv-rank/web/index' => BASE_PATH . '/view/main/index.phtml'
         ],
         'template_path_stack'    => [
             BASE_PATH . '/view',
@@ -63,7 +64,7 @@ return [
     ],
     'router'       => [
         'routes' => [
-            'index' => [
+            'index'       => [
                 'type'    => Literal::class,
                 'options' => [
                     'route'    => '/',
@@ -71,8 +72,18 @@ return [
                         'controller' => WebController::class,
                         'action'     => 'index'
                     ]
+                ],
+            ],
+            'get-metrics' => [
+                'type'    => Literal::class,
+                'options' => [
+                    'route'    => '/get-metrics',
+                    'defaults' => [
+                        'controller' => WebController::class,
+                        'action'     => 'getMetrics'
+                    ]
                 ]
-            ]
+            ],
         ]
     ],
     'console'      => [

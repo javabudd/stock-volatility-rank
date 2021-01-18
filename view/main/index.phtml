@@ -1,0 +1,16 @@
+<?php /** @var \IVRank\Data\MetricType $metricType */ ?>
+<form id="form_metric">
+    <label>Ticker <input type="text" id="form_ticker"/></label>
+    <label>Metric Type
+        <select id="form_metric_type">
+            <?php foreach ($this->metricTypes as $metricType): ?>
+                <option value="<?= $metricType->id ?>"><?= $metricType->name ?>-<?= $metricType->dayType ?></option>
+            <?php endforeach ?>
+        </select>
+    </label>
+    <button id="form_submit">Submit</button>
+</form>
+
+<label>
+<textarea id="metric_text" cols="70"></textarea>
+</label>
