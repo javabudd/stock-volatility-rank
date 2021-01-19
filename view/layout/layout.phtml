@@ -11,27 +11,29 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <script>
-        $('#form_metric').submit(function (e) {
-            const ticker     = $('#form_ticker').val();
-            const metricType = $('#form_metric_type').val();
+        $(document).ready(function ($) {
+            $('#form_metric').submit(function (e) {
+                const ticker     = $('#form_ticker').val();
+                const metricType = $('#form_metric_type').val();
 
-            $.ajax(
-                {
-                    url: "/get-metrics",
-                    method: "POST",
-                    dataType: "json",
-                    data: {
-                        ticker: ticker,
-                        metricType: metricType,
+                $.ajax(
+                    {
+                        url: "/get-metrics",
+                        method: "POST",
+                        dataType: "json",
+                        data: {
+                            ticker: ticker,
+                            metricType: metricType,
+                        }
                     }
-                }
-            ).done(function (e) {
-                $('#metric_text').text(e.rank);
-            }).fail(function (r) {
-                console.log(e);
-            });
+                ).done(function (response) {
+                    $('#metric_text').text(response.rank);
+                }).fail(function (failure) {
+                    console.log(failure);
+                });
 
-            e.preventDefault();
+                e.preventDefault();
+            });
         });
     </script>
 </footer>
