@@ -26,7 +26,7 @@
                     }
                 }
             ).done(function (e) {
-                $('#metric_text').val(JSON.stringify(e));
+                $('#metric_text').text(e.rank);
             }).fail(function (r) {
                 console.log(e);
             });
