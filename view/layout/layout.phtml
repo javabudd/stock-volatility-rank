@@ -27,7 +27,7 @@
                         }
                     }
                 ).done(function (response) {
-                    $('#metric_text').text(response.rank);
+                    $('#metric_text').text(response.rank ? response.rank : response.failure);
                 }).fail(function (failure) {
                     console.log(failure);
                 });
